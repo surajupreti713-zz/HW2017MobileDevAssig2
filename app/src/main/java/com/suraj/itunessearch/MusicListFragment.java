@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,14 +30,29 @@ import static com.suraj.itunessearch.R.id.parent;
 public class MusicListFragment extends Fragment {
 
     private ListView mListView;
+
     private MusicAdapter mMusicAdapter;
+
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private NetworkImageView mImageView;
 
     private TextView mTrackNameView;
     private TextView mArtistNameView;
+    private TextView mCollectionNameView;
 
     private List<Music> mMusic;
 
-    private EditText searchText;
+    private String searchText;
+
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        searchText = getArguments().getString("data");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,10 +62,18 @@ public class MusicListFragment extends Fragment {
 
             @Override
             public void onMusicResponse(List<Music> musicList) {
-                //Log.i("aa", "Hello there!!!!!!!!!!!!!!!!!!!");
                 mMusic = musicList;
                 // Stop the spinner and update the list view.
                 mMusicAdapter.setItems(musicList);
+            }
+        }, searchText);             //////////////////////////
+
+        // Set up the SwipeRefreshLayout to reload when swiped.
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshMusic();
             }
         });
 
@@ -62,17 +91,28 @@ public class MusicListFragment extends Fragment {
             }
         });*/
 
-        ItunesMusicSource.get(getContext()).getMusicItems(new ItunesMusicSource.MusicListener() {
+        // If there is content to display, show it, otherwise refresh content.
+        if (mMusic != null) {
+            mMusicAdapter.setItems(mMusic);
+        }
+        else {
+            mSwipeRefreshLayout.setRefreshing(true);
+            refreshMusic();
+        }
 
+        return v;
+    }
+
+    private void refreshMusic() {
+        ItunesMusicSource.get(getContext()).getMusicItems(new ItunesMusicSource.MusicListener() {
             @Override
             public void onMusicResponse(List<Music> musicList) {
                 mMusic = musicList;
                 // Stop the spinner and update the list view.
+                mSwipeRefreshLayout.setRefreshing(false);
                 mMusicAdapter.setItems(musicList);
             }
-        });
-
-        return v;
+        }, searchText);
     }
 
 
@@ -111,6 +151,20 @@ public class MusicListFragment extends Fragment {
         public View getView(int position, View view, ViewGroup parent) {
             final Music music = mDataSource.get(position);
             View rowView = mInflater.inflate(R.layout.list_item_music, parent, false);
+
+            mTrackNameView = (TextView) rowView.findViewById(R.id.trackNameView);
+            mTrackNameView.setText(music.getmTrackName());
+
+            mArtistNameView = (TextView) rowView.findViewById(R.id.artistNameView);
+            mArtistNameView.setText(music.getmArtistName());
+
+            mCollectionNameView = (TextView) rowView.findViewById(R.id.collectionNameView);
+            mCollectionNameView.setText(music.getmCollectionName());
+
+            mImageView = (NetworkImageView) rowView.findViewById(R.id.networkImageView);
+            ImageLoader loader = ItunesMusicSource.get(getContext()).getImageLoader();
+            mImageView.setImageUrl(music.getmArtworkUrl60(), loader);
+
             return rowView;
         }
     }
