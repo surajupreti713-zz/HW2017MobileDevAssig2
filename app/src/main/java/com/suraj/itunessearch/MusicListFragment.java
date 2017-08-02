@@ -32,14 +32,11 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 public class MusicListFragment extends Fragment {
-
     private ListView mListView;
 
     private MusicAdapter mMusicAdapter;
     private MediaPlayer mMediaPlayer;
     private String mCurrentlyPlayingUrl;
-
-
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private NetworkImageView mImageView;
@@ -51,7 +48,6 @@ public class MusicListFragment extends Fragment {
     private List<Music> mMusic;
 
     private String searchText;
-
 
 
     @Override
@@ -76,7 +72,7 @@ public class MusicListFragment extends Fragment {
                 // Stop the spinner and update the list view.
                 mMusicAdapter.setItems(musicList);
             }
-        }, searchText);             //////////////////////////
+        }, searchText);
 
         // Set up the SwipeRefreshLayout to reload when swiped.
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefresh);
@@ -91,15 +87,19 @@ public class MusicListFragment extends Fragment {
         mMusicAdapter = new MusicAdapter(getActivity());
         mListView.setAdapter(mMusicAdapter);
 
-        /*mListView.setOnClickListener(new AdapterView.OnItemClickListener(){
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
                 Music music = (Music) parent.getAdapter().getItem(position);
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(mu))
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "This track is good");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, music.getmTrackViewUrl());
+                startActivity(Intent.createChooser(shareIntent, "Share link using"));
             }
-        });*/
+        });
 
         // If there is content to display, show it, otherwise refresh content.
         if (mMusic != null) {
@@ -226,8 +226,6 @@ public class MusicListFragment extends Fragment {
                     clickedAudioURL(music.getmPreviewUrl());
                 }
             });
-
-
             return rowView;
         }
     }

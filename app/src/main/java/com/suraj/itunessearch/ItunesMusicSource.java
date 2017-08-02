@@ -24,17 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ItunesMusicSource {
-
     String mSearchTerm;
-    //private EditText mSearchText;
 
     public interface MusicListener {
         void onMusicResponse(List<Music> musicList);
     }
 
     private final static int IMAGE_CACHE_COUNT = 100;
-    private final static int ARTICLE_REQUEST_COUNT = 25;
-    private final static int Music_REQUEST_IMAGE_WIDTH = 400;
     private static ItunesMusicSource sItunesMusicSourceInstance;
 
     private Context mContext;
@@ -66,8 +62,6 @@ public class ItunesMusicSource {
 
     public void getMusicItems(MusicListener musicListener, String searchTerm) {
         final MusicListener musicListenerInternal = musicListener;
-
-        //String url = "https://itunes.apple.com/search?term=nelly&entity=musicTrack";
         String url = "https://itunes.apple.com/search?term=" + searchTerm + "&entity=musicTrack";
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
