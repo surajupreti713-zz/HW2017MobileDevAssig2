@@ -4,6 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageButton
+        android:id="@+id/play_button"
+        android:layout_width="80dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="5dp"
+        android:src="@android:drawable/ic_media_play" />
+
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/networkImageView"
         android:layout_height="80dp"
