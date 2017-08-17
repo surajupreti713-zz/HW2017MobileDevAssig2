@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.suraj.itunessearch.R.id.parent;
+import static com.suraj.itunessearch.R.id.text;
+
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
@@ -61,7 +63,7 @@ public class MusicListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_musiclist, container, false);
 
         ItunesMusicSource.get(getContext()).getMusicItems(new ItunesMusicSource.MusicListener() {
@@ -70,6 +72,8 @@ public class MusicListFragment extends Fragment {
             public void onMusicResponse(List<Music> musicList) {
                 mMusic = musicList;
                 // Stop the spinner and update the list view.
+                TextView textView = container.findViewById(R.id.show_result);
+                textView.setText("Showing results for " + searchText);
                 mMusicAdapter.setItems(musicList);
             }
         }, searchText);
@@ -79,6 +83,8 @@ public class MusicListFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                TextView textView = container.findViewById(R.id.show_result);
+                textView.setText("Searching for " + searchText);
                 refreshMusic();
             }
         });

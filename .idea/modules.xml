@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/HW2017MobileDevAssig2.iml" filepath="$PROJECT_DIR$/HW2017MobileDevAssig2.iml" />
       <module fileurl="file://$PROJECT_DIR$/ItunesSearch.iml" filepath="$PROJECT_DIR$/ItunesSearch.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
